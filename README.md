@@ -106,6 +106,37 @@ services:
       - ./data:/app/server/data
     restart: unless-stopped
 ```
+
+### For the new version v1.3.0 with multitab
+
+#### Run with port mapping (adjust ports as needed)
+```bash
+docker run -d -p 8080:3000 --name intellissh kosztyk/intellissh:latest
+```
+
+#### Run with volume mounts for persistence
+```bash
+docker run -d \
+  -p 8080:3000 \
+  -v $(pwd)/data:/app/server/data \
+  --name intellissh \
+  kosztyk/intellissh:latest
+```
+
+#### Docker Compose
+
+```yaml
+services:
+  intellissh:
+    image: kosztyk/intellissh:latest
+    container_name: intellissh
+    ports:
+      - 8080:3000
+    volumes:
+      # Mount for persistent backend data (SQLite DB, session info, etc.)
+      - ./data:/app/server/data
+    restart: unless-stopped
+```
 ---
 
 ## 📚 Documentation
