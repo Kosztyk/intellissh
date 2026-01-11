@@ -404,6 +404,11 @@
     "direct_api_response": "Direct API response:",
     "public_reset_response": "Public reset response:",
     "api_test_response": "API test response:",
-    "open_in_new_tab": "New tab"
+    "terminal_workspace": "Terminal workspace",
+    "collapse_workspace": "Collapse",
+    "expand_workspace": "Expand",
+    "close_tab": "Close",
+    "close_all": "Close all",
+    "failed_to_connect_session": "Failed to connect to session"
   }
 }

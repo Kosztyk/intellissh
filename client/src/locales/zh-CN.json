@@ -404,6 +404,11 @@
     "direct_api_response": "直接 API 响应:",
     "public_reset_response": "公共重置响应:",
     "api_test_response": "API 测试响应:",
-    "open_in_new_tab": "新标签页"
+    "terminal_workspace": "终端工作区",
+    "collapse_workspace": "折叠",
+    "expand_workspace": "展开",
+    "close_tab": "关闭",
+    "close_all": "全部关闭",
+    "failed_to_connect_session": "连接会话失败"
   }
 }
