@@ -1,6 +1,11 @@
 <template>
-  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="h-full min-h-0 flex flex-col">
+    <!-- Home (Sessions list) -->
+    <div
+      v-show="homeActive"
+      class="flex-1 min-h-0 overflow-y-auto bg-slate-50 dark:bg-slate-900 transition-colors duration-200"
+    >
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="px-4 py-6 sm:px-0">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -78,11 +83,11 @@
         <div class="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-soft p-8 animate-fade-in">
           <div class="spinner mx-auto mb-4 h-10 w-10 border-4"></div>
           <p class="text-slate-600 dark:text-slate-300 text-lg">{{ $t('message.loading_sessions') }}</p>
-          
+
           <div class="mt-8">
             <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">{{ $t('message.loading_too_long') }}</p>
-            <button 
-              @click="forceRefreshSessions" 
+            <button
+              @click="forceRefreshSessions"
               class="btn-primary"
             >
               {{ $t('message.manual_refresh') }}
@@ -142,6 +147,7 @@
                   <h3 class="text-lg font-medium text-slate-900 dark:text-white truncate">
                     {{ session.name }}
                   </h3>
+
                   <!-- Connection Status -->
                   <div
                     v-if="isSessionConnected(session.id)"
@@ -149,6 +155,7 @@
                     title="Connected"
                   ></div>
                 </div>
+
                 <!-- Dropdown Menu -->
                 <div class="relative">
                   <button
@@ -160,6 +167,7 @@
                       <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                     </svg>
                   </button>
+
                   <div
                     v-if="dropdownOpen === session.id"
                     class="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg z-10 border border-slate-200 dark:border-slate-700 overflow-hidden animate-fade-in"
@@ -174,6 +182,7 @@
                         </svg>
                         {{ $t('message.edit') }}
                       </button>
+
                       <button
                         @click="duplicateSession(session)"
                         class="w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center"
@@ -184,7 +193,9 @@
                         </svg>
                         {{ $t('message.duplicate') }}
                       </button>
+
                       <hr class="my-1 border-slate-200 dark:border-slate-700" />
+
                       <button
                         @click="deleteSession(session)"
                         class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
@@ -198,6 +209,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="mt-2 text-sm text-slate-500 dark:text-slate-400">
                 <div class="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
@@ -222,13 +234,13 @@
                   {{ tag.name }}
                 </span>
               </div>
-              
+
               <!-- Console Snapshot Preview -->
               <div v-if="session.console_snapshot || session.consoleSnapshot" class="mt-4">
                 <div class="relative rounded-lg overflow-hidden group">
-                  <img 
-                    :src="session.console_snapshot || session.consoleSnapshot" 
-                    alt="Console Snapshot" 
+                  <img
+                    :src="session.console_snapshot || session.consoleSnapshot"
+                    alt="Console Snapshot"
                     class="w-full h-36 object-cover rounded-lg border border-slate-200 dark:border-slate-700 cursor-pointer transition-transform duration-300 group-hover:scale-105"
                     @click="openFullScreenSnapshot(session.console_snapshot || session.consoleSnapshot)"
                   />
@@ -239,25 +251,16 @@
                 </div>
               </div>
             </div>
-            <div class="card-footer">
-              <div class="flex gap-2">
-                <button
-                  @click="connectToSession(session)"
-                  :disabled="connectingToSession === session.id"
-                  class="w-full btn-primary"
-                >
-                  <span v-if="connectingToSession === session.id" class="spinner mr-2"></span>
-                  {{ connectingToSession === session.id ? $t('message.connecting') : $t('message.connect') }}
-                </button>
 
-                <button
-                  @click="openTerminalInNewTab(session)"
-                  class="btn-outline whitespace-nowrap"
-                  :title="$t('message.open_in_new_tab')"
-                >
-                  {{ $t('message.open_in_new_tab') }}
-                </button>
-              </div>
+            <div class="card-footer">
+              <button
+                @click="connectToSession(session)"
+                :disabled="connectingToSession === session.id"
+                class="w-full btn-primary"
+              >
+                <span v-if="connectingToSession === session.id" class="spinner mr-2"></span>
+                {{ connectingToSession === session.id ? $t('message.connecting') : $t('message.connect') }}
+              </button>
             </div>
           </div>
         </div>
@@ -318,8 +321,8 @@
       class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       @click="fullScreenSnapshot = null"
     >
-      <div class="relative max-w-4xl max-h-screen animate-fade-in">
-        <button 
+      <div class="relative max-w-4xl max-h-screen animate-fade-in" @click.stop>
+        <button
           @click="fullScreenSnapshot = null"
           class="absolute top-4 right-4 text-white bg-slate-800/80 rounded-full p-2 hover:bg-slate-700/80 transition-colors"
         >
@@ -327,10 +330,28 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <img 
-          :src="fullScreenSnapshot" 
-          alt="Console Snapshot" 
+        <img
+          :src="fullScreenSnapshot"
+          alt="Console Snapshot"
           class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-lg"
+        />
+      </div>
+    </div>
+
+    </div>
+
+    <!-- Terminal Workspace (full-height) -->
+    <div
+      v-show="!homeActive"
+      class="flex-1 min-h-0 overflow-hidden bg-terminal-bg dark:bg-terminal-bgDark transition-colors duration-200"
+    >
+      <div class="h-full w-full">
+        <TerminalPane
+          v-for="sessionId in terminalTabs.tabs"
+          :key="sessionId"
+          :session-id="sessionId"
+          :active="sessionId === terminalTabs.activeSessionId"
+          class="h-full"
         />
       </div>
     </div>
@@ -341,16 +362,20 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSessionStore } from '@/stores/sessionStore'
-import { useTerminalStore } from '@/stores/terminalStore'
+import { useTerminalTabsStore } from '@/stores/terminalTabsStore'
 import { useTagStore } from '@/stores/tagStore'
 import SessionForm from '@/components/SessionForm.vue'
 import TagManagerModal from '@/components/TagManagerModal.vue'
 import TagMultiSelect from '@/components/TagMultiSelect.vue'
+import TerminalPane from '@/components/TerminalPane.vue'
 import { useI18n } from 'vue-i18n'
 
 // Stores and router
 const sessionStore = useSessionStore()
-const terminalStore = useTerminalStore()
+const terminalTabs = useTerminalTabsStore()
+
+// "Home" is a special tab (no active session)
+const homeActive = computed(() => terminalTabs.activeSessionId === null)
 const tagStore = useTagStore()
 const router = useRouter()
 const { t } = useI18n()
@@ -362,20 +387,10 @@ const editingSession = ref(null)
 const sessionToDelete = ref(null)
 const dropdownOpen = ref(null)
 const connectingToSession = ref(null)
-const testingConnection = ref(null)
 const deletingSession = ref(false)
 const fullScreenSnapshot = ref(null)
 const selectedTagIds = ref([])
 const showTagManager = ref(false)
-
-// Cross-tab connection awareness (supports HomeView showing "Connected" when terminal is open in other tabs)
-const tabConnections = ref(new Map()) // tabId -> sessionId
-let terminalBroadcast = null
-const terminalBroadcastChannelName = 'intellissh-terminal'
-
-const connectedSessionIdsFromOtherTabs = computed(() => {
-  return new Set([...tabConnections.value.values()])
-})
 
 // Computed
 const filteredSessions = computed(() => {
@@ -416,7 +431,7 @@ const duplicateSession = async (session) => {
   closeDropdown()
   const newName = `${session.name} (Copy)`
   const result = await sessionStore.duplicateSession(session.id, newName)
-  
+
   if (!result.success) {
     console.error(t('message.failed_to_duplicate_session'), result.error)
   } else {
@@ -427,22 +442,6 @@ const duplicateSession = async (session) => {
   }
 }
 
-const testConnection = async (session) => {
-  closeDropdown()
-  testingConnection.value = session.id
-  
-  const result = await sessionStore.testConnection(session.id)
-  
-  if (result.success) {
-    // Show success message (you could implement a toast notification here)
-    console.log(t('message.connection_test_successful'))
-  } else {
-    console.error(t('message.connection_test_failed'), result.error)
-  }
-  
-  testingConnection.value = null
-}
-
 const deleteSession = (session) => {
   sessionToDelete.value = session
   closeDropdown()
@@ -450,10 +449,10 @@ const deleteSession = (session) => {
 
 const confirmDelete = async () => {
   if (!sessionToDelete.value) return
-  
+
   deletingSession.value = true
   const result = await sessionStore.deleteSession(sessionToDelete.value.id)
-  
+
   if (result.success) {
     sessionToDelete.value = null
     const tagRefresh = await tagStore.fetchTags()
@@ -463,7 +462,7 @@ const confirmDelete = async () => {
   } else {
     console.error(t('message.failed_to_delete_session'), result.error)
   }
-  
+
   deletingSession.value = false
 }
 
@@ -471,41 +470,21 @@ const handleTagDeleted = (tagId) => {
   selectedTagIds.value = selectedTagIds.value.filter(id => id !== tagId)
 }
 
-
-const openTerminalInNewTab = (session) => {
-  const url = router.resolve({
-    name: 'terminal',
-    params: { sessionId: session.id }
-  }).href
-
-  // Must be called from a direct click handler to avoid pop-up blocking
-  window.open(url, '_blank', 'noopener,noreferrer')
+const connectToSession = async (session) => {
+  connectingToSession.value = session.id
+  try {
+    // Store supports openTab(sessionObject) and openTab(sessionId)
+    await terminalTabs.openTab(session)
+    terminalTabs.setActive(session.id)
+  } catch (error) {
+    console.error(t('message.failed_to_connect_session') || 'Failed to connect session', error)
+  } finally {
+    connectingToSession.value = null
+  }
 }
 
-
-const connectToSession = async (session) => {
-  connectingToSession.value = session.id;
-  
-  try {
-    if (terminalStore.getPersistedSessions[session.id]) {
-      console.log(t('message.attempting_reattach_session') + `${session.id}`);
-      await terminalStore.reattachToSession(session.id);
-    } else {
-      console.log(t('message.attempting_connect_new_session') + `${session.id}`);
-      // The actual connection logic is now handled by connectToSession in terminalStore
-      // which will either connect or reattach based on persisted state.
-    }
-    router.push(`/terminal/${session.id}`);
-  } catch (error) {
-    console.error(t('message.failed_to_connect_reattach_session'), error);
-    connectingToSession.value = null;
-  }
-};
-
 const isSessionConnected = (sessionId) => {
-  return (terminalStore.hasActiveSession && terminalStore.activeSession?.id === sessionId) ||
-         (terminalStore.getPersistedSessions[sessionId] !== undefined) ||
-         connectedSessionIdsFromOtherTabs.value.has(sessionId);
+  return terminalTabs.getTab(sessionId)?.status === 'connected'
 }
 
 const closeModal = () => {
@@ -530,7 +509,7 @@ const formatDate = (dateString) => {
   const now = new Date()
   const diffTime = Math.abs(now - date)
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  
+
   if (diffDays === 1) {
     return t('message.yesterday')
   } else if (diffDays < 7) {
@@ -548,63 +527,6 @@ const handleClickOutside = (event) => {
   }
   closeDropdown()
 }
-
-// Lifecycle
-onMounted(async () => {
-  console.log(t('message.homeview_mounted_initializing'))
-  
-  // First, ensure we're not in a loading state
-  sessionStore.clearLoadingState()
-  
-  // Try to fetch sessions
-  refreshSessions()
-  
-  // Add click outside handler for dropdown
-  document.addEventListener('click', handleClickOutside)
-
-  // Cross-tab: receive connection status from TerminalView tabs
-  if ('BroadcastChannel' in window) {
-    try {
-      terminalBroadcast = new BroadcastChannel(terminalBroadcastChannelName)
-      terminalBroadcast.onmessage = (ev) => {
-        const msg = ev?.data
-        if (!msg || !msg.type || !msg.tabId) return
-
-        if (msg.type === 'connected') {
-          const next = new Map(tabConnections.value)
-          next.set(msg.tabId, Number(msg.sessionId))
-          tabConnections.value = next
-        } else if (msg.type === 'disconnected') {
-          const next = new Map(tabConnections.value)
-          next.delete(msg.tabId)
-          tabConnections.value = next
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to initialize BroadcastChannel for terminal status:', e)
-    }
-  }
-  
-  // Add navigation event listener to refresh sessions when navigating back to this page
-  window.addEventListener('popstate', handleNavigateBack)
-  router.beforeResolve((to, from, next) => {
-    if (to.path === '/') {
-      refreshSessions()
-    }
-    next()
-  })
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  window.removeEventListener('popstate', handleNavigateBack)
-
-  try {
-    terminalBroadcast?.close()
-  } catch (e) {
-    // no-op
-  }
-})
 
 // Handler for navigation events
 const handleNavigateBack = () => {
@@ -640,31 +562,28 @@ const openFullScreenSnapshot = (snapshotUrl) => {
 
 // Force refresh function for the manual refresh button
 const forceRefreshSessions = async () => {
-  console.log(t('message.manual_refresh_triggered'))
-
-  // First clear any loading state and reset sessions
   sessionStore.clearLoadingState()
-
-  // Use the store's fetchSessions method to ensure proper authentication and error handling
-  try {
-    const [sessionResult, tagResult] = await Promise.all([
-      sessionStore.fetchSessions(),
-      tagStore.fetchTags()
-    ])
-
-    if (sessionResult?.success && tagResult?.success) {
-      console.log(t('message.manual_refresh_successful'))
-    } else {
-      if (!sessionResult?.success) {
-        console.error(t('message.failed_to_refresh_sessions'), sessionResult?.error)
-      }
-      if (!tagResult?.success) {
-        console.error(t('message.tag_loading_failed'), tagResult?.error)
-      }
-    }
-  } catch (err) {
-    console.error(t('message.manual_refresh_failed'), err)
-    // The sessionStore.fetchSessions() already handles setting error state and clearing sessions on failure
-  }
+  await refreshSessions()
 }
+
+// Lifecycle
+onMounted(async () => {
+  sessionStore.clearLoadingState()
+  refreshSessions()
+
+  document.addEventListener('click', handleClickOutside)
+
+  window.addEventListener('popstate', handleNavigateBack)
+  router.beforeResolve((to, from, next) => {
+    if (to.path === '/') {
+      refreshSessions()
+    }
+    next()
+  })
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  window.removeEventListener('popstate', handleNavigateBack)
+})
 </script>
